@@ -1,0 +1,13 @@
+{
+  "name": "revise_subtitles",
+  "description": "Revise subtitles for kcwiki",
+  "author": "grzhan <envy518@gmail.com>",
+  "dependencies": {
+    "es6-promise": "^3.2.1",
+    "whatwg-fetch": "^1.0.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.14.0",
+    "gulp": "^3.9.1"
+  }
+}

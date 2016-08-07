@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>舰娘服务器维护与抢号时间设置</title>
+    <link rel="stylesheet" href="assets/semantic.min.css">
+    <style>
+        body { background: #e4e7ee; word-wrap: break-word; word-break: break-all; padding-top: 100px; }
+        .ui.form { text-align: left; }
+        .clear { clear: both; }
+        .tabular { cursor: pointer; }
+    </style>
+</head>
+<body>
+    <section class="ui two column centered stackable grid" id="container">
+        <article class="column ui segment">
+            <h2 class="ui centered dividing header">
+                kcwiki 舰娘服务器维护与抢号时间设置
+            </h2>
+            <div class="ui hidden message">
+                <p></p>
+            </div>
+            <div class="ui top attached tabular menu">
+                <div class="item">服务器维护</div>
+                <div class="active item">抢号时间</div>
+            </div>
+            <div class="ui bottom attached tab segment">
+                <form class="ui form">
+                    <div class="field">
+                        <label>服务器维护开始时间</label>
+                        <input type="text" name="start-time" placeholder="格式：2016-08-04 14:00">
+                    </div>
+                    <div class="field">
+                        <label>备注</label>
+                        <textarea name="comment" rows="4"></textarea>
+                    </div>
+                    <div class="ui right floated button server">提交</div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+            <div class="ui bottom attached active tab segment">
+                <form class="ui form">
+                    <div class="field">
+                        <label>抢号开始时间</label>
+                        <input type="text" name="start-time" placeholder="格式：2016-08-04 14:00">
+                    </div>
+                    <div class="field">
+                        <label>备注</label>
+                        <textarea name="comment" rows="4"></textarea>
+                    </div>
+                    <div class="ui right floated button account">提交</div>
+                    <div class="clear"></div>
+                </form>
+            </div>
+        </article>
+    </section>
+    <script src="assets/es6-promise.js"></script>
+    <script src="assets/fetch.js"></script>
+    <script>
+        // Message display
+        var displayMsg = function(type, content) {
+            var message = document.querySelector('.message');
+            var para = message.querySelector('p');
+            message.className = 'ui ' + type + ' message';
+            para.innerText = content;
+        }
+
+        // Toggle tabs
+        var tabItems = document.querySelectorAll('.tabular > .item');
+        var segItems = document.querySelectorAll('.tab.segment');
+        for (var x=0; x<tabItems.length; x++) {
+            (function(x) {
+                var tabItem = tabItems[x];
+                var segItem = segItems[x];
+                tabItem.addEventListener('click', function () {
+                    for (var i = 0; i < tabItems.length; i++) {
+                        tabItems[i].classList.remove('active');
+                        segItems[i].classList.remove('active');
+                    }
+                    tabItem.classList.add('active');
+                    segItem.classList.add('active');
+                });
+            })(x);
+        }
+        // Submit forms
+        var buttons = document.querySelectorAll('.button');
+        for (var i=0; i<buttons.length; i++) {
+            (function(i) {
+                var button = buttons[i];
+                button.addEventListener('click', function() {
+                    var form = new FormData(button.parentElement);
+                    if (button.classList.contains('account')) {
+                        form.append('type', 'account');
+                    } else if (button.classList.contains('server')) {
+                        form.append('type', 'server');
+                    } else {
+                        return;
+                    }
+                    // Validate datetime format
+                    var inputs = button.parentElement.querySelectorAll('input');
+                    for (var i=0; i<inputs.length; i++) {
+                        var value = inputs[i].value;
+                        if (value.length > 0 && !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(value)) {
+                            displayMsg('warning', '设置失败, 请检查日期格式。');
+                            return;
+                        }
+                    }
+                    // Post data
+                    fetch('http://api.kcwiki.moe/optime', {
+                        method: 'POST',
+                        body: form
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(data){
+                        if (data['result'] == 'success') {
+                            displayMsg('success', '设置成功!');
+                        } else {
+                            displayMsg('error', data['reason']);
+                        }
+                    })['catch'](function(ex) {
+                        console.log('parsing failed', ex);
+                    });
+                });
+            })(i);
+        }
+    </script>
+</body>
+</html>
