@@ -97,10 +97,13 @@
                 var button = buttons[i];
                 button.addEventListener('click', function() {
                     var form = new FormData(button.parentElement);
+                    var type = '';
                     if (button.classList.contains('account')) {
                         form.append('type', 'account');
+                        type = 'account';
                     } else if (button.classList.contains('server')) {
                         form.append('type', 'server');
+                        type = 'server';
                     } else {
                         return;
                     }
@@ -121,7 +124,8 @@
                         return response.json();
                     }).then(function(data){
                         if (data['result'] == 'success') {
-                            displayMsg('success', '设置成功!');
+                            displayMsg('success', '设置成功! 请前往 api.kcwiki.moe/optime/' +
+                                        type + ' 查看输出JSON结果');
                         } else {
                             displayMsg('error', data['reason']);
                         }
