@@ -31,6 +31,10 @@
                         <input type="text" name="start-time" placeholder="格式：2016-08-04 14:00">
                     </div>
                     <div class="field">
+                        <label>密码</label>
+                        <input type="password" name="password">
+                    </div>
+                    <div class="field">
                         <label>备注</label>
                         <textarea name="comment" rows="4"></textarea>
                     </div>
@@ -43,6 +47,10 @@
                     <div class="field">
                         <label>抢号开始时间</label>
                         <input type="text" name="start-time" placeholder="格式：2016-08-04 14:00">
+                    </div>
+                    <div class="field">
+                        <label>密码</label>
+                        <input type="password" name="password">
                     </div>
                     <div class="field">
                         <label>备注</label>
@@ -97,7 +105,7 @@
                         return;
                     }
                     // Validate datetime format
-                    var inputs = button.parentElement.querySelectorAll('input');
+                    var inputs = button.parentElement.querySelectorAll('input[type="text"]');
                     for (var i=0; i<inputs.length; i++) {
                         var value = inputs[i].value;
                         if (value.length > 0 && !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(value)) {
